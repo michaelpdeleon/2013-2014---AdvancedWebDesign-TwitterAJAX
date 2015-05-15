@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <title>Twitter Test</title>
+        <script src="//code.jquery.com/jquery-1.10.1.min.js"></script>
+    </head>
+    <body>
+        <h1>Twitter Test</h1>
+        <button id="go">Go</button>
+        <div>
+            <ul id="resultList">
+            </ul>
+        </div>
+        <script type="text/javascript">
+        
+            $(document).ready(function () {
+            
+                $("#go").click(function () {
+                    $("#resultList").empty();
+                    
+                    $.ajax({
+                        data: {
+                            q: "apple",
+                            count: 10
+                        },
+                        url: '/twitter.php/search/tweets.json',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (serverResponse) {
+                            for (var i = 0; i < serverResponse.statuses.length; i++) {
+                                var tweet = serverResponse.statuses[i];
+                                $("#resultList").append("<li>" + tweet.text + "</li>");
+                            }
+                        }
+                    });
+                });
+            
+            });
+            
+        </script>
+    </body>
+</html>

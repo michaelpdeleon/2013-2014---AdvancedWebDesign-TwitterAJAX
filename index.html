@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+ITI 332 Homework 6 - Twitter and Ajax using Cloud 9 (http://c9.io) and Bootstrap (http://getbootstrap.com)
+Created by Michael De Leon
+November 4, 2013
+-->
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <title>Twitter and Ajax</title>
+        
+        <script src="js/jquery-1.10.2.min.js"></script>
+        
+        <!-- Bootstrap core CSS -->
+        <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+        
+        <!-- Custom styles for this template -->
+        <link href="css/main.css" rel="stylesheet">
+    </head>
+    
+    <body>
+        <div class="container">
+            
+            <!-- Form title -->
+            <div class="col-lg-12">
+                <h1>Search Tweets</h1>
+            </div>
+            
+            <!-- Main form -->
+            <form class="form-horizontal" role="form" id="mainForm">
+                
+                <!-- Search terms input -->
+                <div class="form-group">
+                    <label for="inputTerms1" class="col-lg-2 control-label">Search for:</label>
+                    <div class="col-lg-4">
+                        <input type="text" class="form-control" id="inputTerms1">
+                    </div>
+                </div>
+                
+                
+                <!-- Search history -->
+                <div class="form-group">
+                    <!-- Search history title -->
+                    <label for="searchHistory" class="col-lg-2 control-label">Previous searches:</label>
+                    <!-- Search history placeholder -->
+                    <div class="col-lg-4" id="searchHistory">
+                
+                    </div>
+                </div>
+                
+                <!-- Search button -->
+                <div class="form-group">
+                    <div class="col-lg-2"></div>
+                    <div class="col-lg-4">
+                        <button type="submit" class="btn btn-default" id="searchButton">Search</button>
+                    </div>
+                </div>
+            </form><!-- end of main form -->
+            
+            <!-- Results title -->
+            <div class="col-lg-12">
+                <h1>Results:</h1>
+            </div>
+            
+            <!-- Results placeholder -->
+            <div class="col-lg-12" id="results">
+                
+            </div>
+            
+            <script type="text/javascript">
+            
+                // start unobtrusive javascript
+                $(document).ready(function () {
+                    
+                    // set the submit button to return false to prevent the page from refreshing
+                    $("#mainForm").submit(function () {
+                        return false;
+                    });
+                    
+                    // initialize tweet history index
+                    var historyIndex = 1;
+                    
+                    // START searching for tweets
+                    $("#searchButton").click(function () {
+                       $("#results").empty();
+                       
+                        var dataobj = {
+                           q: $("#inputTerms1").val(),
+                           count: 10,
+                        };
+                       
+                       $.ajax({
+                            url: '/twitter.php/search/tweets.json',
+                            type: 'GET',
+                            data: dataobj,
+                            dataType: 'json',
+                            success: function (serverResponse) {
+                                $("#results").append('<p id="searchResultsTitle">for "<em>' + dataobj.q + '</em>" ...</p>');
+                                
+                                for (var i = 0; i < serverResponse.statuses.length; i++) {
+                                    var tweet = serverResponse.statuses[i];
+                                    var tweetindex = i + 1;
+                                    $("#results").append('<div><p id="twitterUser">' + tweetindex + '. @' + tweet.user.screen_name + ' tweeted:</p><p id="twitterText">' + tweet.text + '</p></div>');
+                                }
+                                
+                                $("#searchHistory").append('<a href="javascript:" id="' + historyIndex + '">' + dataobj.q + '</a> ');
+                                
+                                // increment tweet history index
+                                historyIndex++;
+                                
+                                // pick a search term from previous searches
+                                $("#" + historyIndex).click(function () {
+                                    //$("#inputTerms1").val(document.getElementById(historyIndex).innerHTML);
+                                    $("#inputTerms1").val($(this).text());
+                                });
+                            },
+                            error: function () {
+                                $("#results").empty().append('<div id="errors">An error occured contacting the server.</div>');
+                            }
+                       });// ajax
+                       
+                    });// #searchButton
+                    
+                });// end unobtrusive javascript
+            </script>
+            
+        </div><!-- container -->
+        
+        <!-- Bootstrap core Javascript -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="bootstrap/js/bootstrap.min.js"></script>
+    </body>
+</html>

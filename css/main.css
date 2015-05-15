@@ -1,0 +1,27 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
+ol, ul { 
+   	list-style-type: none;
+}
+
+.modal-body {
+	overflow-y: auto;
+	max-height: 400px;
+}
+
+#errors {
+    color: red;
+}
+
+#searchResultsTitle {
+    font-weight: bold;
+    font-size: 1em;
+    margin-left: 40px;
+}
+
+#twitterText {
+    padding-left: 40px;
+}
